@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# uv
+.uv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Cache de RDAP
+.eti_cache/
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Variables de entorno
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db

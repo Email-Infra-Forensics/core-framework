@@ -1,0 +1,26 @@
+# weights.yaml — Pesos del algoritmo ETI
+#
+# Editar estos valores sin tocar código para ajustar el scoring.
+# Los pesos deben sumar 1.0.
+#
+# Descripción de cada componente:
+#   asn_consistency: ¿La infraestructura de red coincide con la línea base?
+#   msgid_match:     ¿El Message-ID coincide con la firma de la organización?
+#   auth_validity:   ¿SPF/DKIM/DMARC pasan y son consistentes?
+
+weights:
+  asn_consistency: 0.40
+  msgid_match: 0.30
+  auth_validity: 0.30
+
+# Umbrales de clasificación del ETI (0–100)
+thresholds:
+  trusted: 70       # ETI >= 70 → trusted
+  suspicious: 40    # ETI 40–69 → suspicious
+                    # ETI < 40  → anomalous
+
+# Penalizaciones por condiciones especiales (se restan al ETI final)
+penalties:
+  anomalous_hop_per_hop: 5.0      # por cada hop marcado como ANOMALOUS
+  no_auth_results_header: 10.0    # si no hay header Authentication-Results
+  all_unknown_asns: 15.0          # si todos los hops tienen ASN desconocido

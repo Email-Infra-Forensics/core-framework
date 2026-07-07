@@ -1,0 +1,26 @@
+From: sender@bancochile.cl
+To: cliente@gmail.com
+Subject: Tu estado de cuenta - BancoChile
+Date: Mon, 01 Jan 2024 12:00:00 +0000
+Message-ID: <20240101120000.12345@bancochile.cl>
+MIME-Version: 1.0
+Authentication-Results: mx.google.com;
+   dkim=pass header.i=@bancochile.cl header.s=selector1;
+   spf=pass (google.com: domain of sender@bancochile.cl designates 209.85.220.41 as permitted sender)
+     smtp.mailfrom=sender@bancochile.cl;
+   dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=bancochile.cl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bancochile.cl;
+   s=selector1; h=from:to:subject:date:message-id;
+   bh=abc123==; b=def456==
+Received: from mail-out.bancochile.cl (mail-out.bancochile.cl [209.85.220.41])
+   by mx.google.com with ESMTPS id abc123
+   for <cliente@gmail.com>;
+   Mon, 1 Jan 2024 12:00:00 +0000 (UTC)
+Received: from smtp.bancochile.cl (smtp.bancochile.cl [190.160.1.10])
+   by mail-out.bancochile.cl with ESMTP id xyz789;
+   Mon, 1 Jan 2024 11:59:58 +0000 (UTC)
+Received: from mail-relay.bancochile.cl (mail-relay.bancochile.cl [190.160.1.5])
+   by smtp.bancochile.cl with ESMTP id mno456;
+   Mon, 1 Jan 2024 11:59:55 +0000 (UTC)
+
+Este es el cuerpo del correo. Solo los headers son relevantes para el análisis.
