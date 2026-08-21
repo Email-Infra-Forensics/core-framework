@@ -137,11 +137,41 @@ def parse_all_auth_headers(headers_dict: dict) -> AuthResult:
         if result.spf != AuthStatus.UNKNOWN or result.dkim != AuthStatus.UNKNOWN:
             return result
 
-    # Fallback: parsear el primero que haya (aunque sea empty)
+    # Fallback: parsear el primero que haya (aunque sea vacío)
     if auth_headers:
         return parse_authentication_results(auth_headers[0])
 
-    return AuthResult()
+    # ── Señales secundarias cuando no hay Authentication-Results ──────────────
+    # Gmail a veces omite el header en la respuesta view=om para ciertos correos.
+    # Podemos inferir señales de autenticación de otros headers.
+    result = AuthResult()  # raw=None → indica que no hay AR completo
+
+    # DKIM-Signature: si el correo contiene una firma DKIM, SPF probablemente pasó
+    dkim_sig = headers_dict.get("dkim-signature", None)
+    if dkim_sig:
+        # La presencia del header DKIM-Signature indica que el remitente firmó
+        # (no garantiza que fue verificada, pero es señal positiva)
+        result.dkim = AuthStatus.NEUTRAL  # no podemos confirmar pass sin el AR
+
+    # Received-SPF: algunas gateways agregan este header por separado
+    received_spf = headers_dict.get("received-spf", None)
+    if received_spf:
+        spf_str = str(received_spf).lower()
+        if "pass" in spf_str:
+            result.spf = AuthStatus.PASS
+        elif "fail" in spf_str:
+            result.spf = AuthStatus.FAIL
+        elif "softfail" in spf_str:
+            result.spf = AuthStatus.SOFTFAIL
+        elif "neutral" in spf_str:
+            result.spf = AuthStatus.NEUTRAL
+
+    # X-Google-DKIM-Signature: señal de que Gmail procesó una firma DKIM
+    if headers_dict.get("x-google-dkim-signature"):
+        if result.dkim == AuthStatus.UNKNOWN:
+            result.dkim = AuthStatus.NEUTRAL
+
+    return result
 
 
 def auth_score(auth: "AuthResult") -> float:
@@ -149,12 +179,28 @@ def auth_score(auth: "AuthResult") -> float:
     Calcula un sub-score de autenticación (0.0–1.0).
 
     Lógica:
+    - Authentication-Results ausente (raw=None): neutro 0.3 (no es fail, no sabemos)
     - DKIM pass: +0.4
     - SPF pass: +0.3
     - DMARC pass: +0.3
     - softfail/neutral: mitad del puntaje
     - fail/none: 0
+    - UNKNOWN (sin dato): 0 puntos de ese componente, pero no penaliza
     """
+    # Si no hay Authentication-Results en absoluto, no podemos evaluar.
+    # Es diferente a "fail" — devolvemos mínimo de aprobación (score neutro)
+    if auth.raw is None:
+        # Señales secundarias: DKIM-Signature o Received-SPF pueden dar crédito parcial
+        partial = 0.0
+        if auth.dkim in (AuthStatus.PASS, AuthStatus.NEUTRAL):
+            partial += 0.2  # crédito parcial por firma DKIM detectada
+        if auth.spf == AuthStatus.PASS:
+            partial += 0.15  # crédito por SPF detectado en Received-SPF
+        elif auth.spf == AuthStatus.NEUTRAL:
+            partial += 0.075
+        # Mínimo neutro de 0.3 si no hay ninguna señal
+        return max(0.3, min(1.0, partial + 0.3))
+
     score = 0.0
 
     def _points(status: AuthStatus, full: float) -> float:
@@ -162,6 +208,8 @@ def auth_score(auth: "AuthResult") -> float:
             return full
         elif status in (AuthStatus.SOFTFAIL, AuthStatus.NEUTRAL):
             return full * 0.5
+        elif status == AuthStatus.UNKNOWN:
+            return 0.0  # sin dato: no suma pero no penaliza
         return 0.0
 
     score += _points(auth.dkim, 0.4)

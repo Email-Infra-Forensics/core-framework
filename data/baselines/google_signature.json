@@ -1,0 +1,28 @@
+{
+  "org_id": "google",
+  "sample_count": 434,
+  "uuid_freq": 0.023,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.002,
+  "hex_block_freq": 0.486,
+  "counter_freq": 0.449,
+  "local_part_length_min": 16,
+  "local_part_length_max": 67,
+  "local_part_length_mean": 39.4,
+  "segment_count_min": 1,
+  "segment_count_max": 7,
+  "segment_count_mean": 2.4,
+  "domains": [
+    "google.com",
+    "mail.gmail.com",
+    "notifications.google.com",
+    "policies.google.com"
+  ],
+  "top_prefixes": [
+    "autoge",
+    "WG",
+    "dc",
+    "af",
+    "cb"
+  ]
+}

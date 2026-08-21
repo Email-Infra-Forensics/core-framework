@@ -159,15 +159,59 @@ def analyze(
         source_file=str(eml_path),
     )
 
-    # Cargar firma de organización si se especificó
+    # Cargar firma de organización si se especificó o por auto-detección
     org_signature = None
+    base_dir = Path(__file__).resolve().parent.parent.parent / "data" / "baselines"
+    if not base_dir.exists():
+        for cand in [
+            Path.cwd() / "data" / "baselines",
+            Path.cwd() / "core-framework" / "data" / "baselines",
+            Path("/home/luval/Escritorio/Email-Trust/core-framework/data/baselines"),
+        ]:
+            if cand.exists():
+                base_dir = cand
+                break
+    
     if org and signatures_dir:
         from eti_core.msgid.signature import OrgSignature
         sig_path = signatures_dir / f"{org}.json"
+        if not sig_path.exists():
+            sig_path = signatures_dir / f"{org}_signature.json"
         if sig_path.exists():
             org_signature = OrgSignature.load(sig_path)
         else:
             console.print(f"[yellow]Advertencia: No se encontró firma para '{org}' en {signatures_dir}[/]")
+    elif sender_domain and base_dir.exists():
+        from eti_core.msgid.signature import OrgSignature
+        domain_to_sig = {
+            "gmail.com": "google",
+            "google.com": "google",
+            "hotmail.com": "microsoft",
+            "outlook.com": "microsoft",
+            "bancoestado.cl": "bancoestado",
+            "bestado.cl": "bancoestado",
+            "bancochile.cl": "bancochile",
+            "falabella.com": "falabella",
+            "bancofalabella.cl": "bancofalabella",
+            "bci.cl": "bci",
+            "mercadolibre.cl": "mercadolibre",
+            "mercadolibre.com": "mercadolibre",
+            "santander.cl": "santander",
+        }
+        org_name = domain_to_sig.get(sender_domain)
+        if not org_name:
+            for pf in base_dir.glob("*_signature.json"):
+                org_prefix = pf.name.replace("_signature.json", "")
+                if org_prefix in sender_domain:
+                    org_name = org_prefix
+                    break
+        if org_name:
+            sig_file = base_dir / f"{org_name}_signature.json"
+            if sig_file.exists():
+                try:
+                    org_signature = OrgSignature.load(sig_file)
+                except Exception:
+                    pass
 
     # Calcular ETI
     score = calculate_eti(email_headers, org_signature=org_signature)
@@ -176,6 +220,47 @@ def analyze(
         print(score.model_dump_json(indent=2))
     else:
         _print_trust_score(score, verbose=verbose)
+
+
+@app.command()
+def build_signature(
+    samples_file: Annotated[Path, typer.Argument(help="Archivo de texto (.txt) con un Message-ID por línea o JSONL")],
+    org_id: Annotated[str, typer.Option("--org", "-o", help="Identificador de la organización (ej: santander, bancoestado)")],
+    output: Annotated[Optional[Path], typer.Option("--output", "-out", help="Ruta de salida para el archivo JSON")] = None,
+) -> None:
+    """
+    Construye una firma matemática OrgSignature a partir de una lista de Message-IDs.
+    """
+    from eti_core.msgid.signature import build_signature as _build_sig
+    
+    if not samples_file.exists():
+        err_console.print(f"[red]Error: No se encontró el archivo {samples_file}[/]")
+        sys.exit(1)
+        
+    samples = []
+    lines = samples_file.read_text(encoding="utf-8").splitlines()
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        if line.startswith("{") and "message_id_raw" in line:
+            try:
+                data = json.loads(line)
+                if data.get("message_id_raw"):
+                    samples.append(data["message_id_raw"])
+            except Exception:
+                pass
+        else:
+            samples.append(line)
+            
+    if not samples:
+        err_console.print(f"[red]Error: No se encontraron muestras de Message-ID en {samples_file}[/]")
+        sys.exit(1)
+        
+    sig = _build_sig(org_id, samples)
+    out_path = output or Path(f"{org_id}_signature.json")
+    sig.save(out_path)
+    console.print(f"[green]✓ Firma construida exitosamente para '{org_id}' ({sig.sample_count} muestras): {out_path}[/]")
 
 
 @app.command()

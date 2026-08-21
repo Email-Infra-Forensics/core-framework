@@ -50,6 +50,9 @@ class OrgSignature:
     # Prefijos más frecuentes
     top_prefixes: list[str] = field(default_factory=list)
 
+    # Proveedores (ESPs) detectados
+    top_providers: list[str] = field(default_factory=list)
+
     def to_json(self) -> str:
         return json.dumps(asdict(self), indent=2)
 
@@ -107,6 +110,10 @@ def build_signature(org_id: str, msgid_samples: list[str]) -> OrgSignature:
     prefixes = [c.prefix for c in components if c.prefix]
     top_prefixes = [p for p, _ in Counter(prefixes).most_common(5)]
 
+    # Proveedores ESP dominantes
+    providers = [c.provider for c in components if c.provider and c.provider != "Unknown"]
+    top_providers = [p for p, _ in Counter(providers).most_common(3)]
+
     return OrgSignature(
         org_id=org_id,
         sample_count=n,
@@ -123,6 +130,7 @@ def build_signature(org_id: str, msgid_samples: list[str]) -> OrgSignature:
         segment_count_mean=round(sum(segments) / n, 1),
         domains=sorted(domains),
         top_prefixes=top_prefixes,
+        top_providers=top_providers,
     )
 
 
@@ -151,17 +159,24 @@ def score_against_signature(
     score = 0.0
     factors = 0
 
-    def _bool_match(comp_val: bool, sig_freq: float) -> float:
-        """Si comp_val concuerda con la frecuencia esperada → buen match."""
-        if sig_freq >= 0.8:
-            # Se espera casi siempre → penalizar si falta
-            return 1.0 if comp_val else 0.0
-        elif sig_freq <= 0.2:
-            # Raramente se espera → penalizar si aparece
-            return 1.0 if not comp_val else 0.2
+    def _bool_match(comp_val: bool, sig_freq: float) -> tuple[float, float]:
+        """Retorna (score_obtenido, peso_del_factor)."""
+        if sig_freq >= 0.75:
+            # Es un feature característico esperado de esta organización
+            weight = 2.0
+            score_val = 1.0 if comp_val else 0.0
+            return score_val * weight, weight
+        elif sig_freq <= 0.25:
+            # Es un feature raro/no característico
+            weight = 1.0
+            score_val = 1.0 if not comp_val else 0.0
+            return score_val * weight, weight
         else:
-            # Frecuencia intermedia → no es discriminador fuerte
-            return 0.7
+            weight = 0.5
+            return 0.5 * weight, weight
+
+    total_weighted_score = 0.0
+    total_weight = 0.0
 
     # Comparar features booleanos
     bool_checks = [
@@ -172,8 +187,9 @@ def score_against_signature(
         (comp.has_counter, signature.counter_freq),
     ]
     for val, freq in bool_checks:
-        score += _bool_match(val, freq)
-        factors += 1
+        s, w = _bool_match(val, freq)
+        total_weighted_score += s
+        total_weight += w
 
     # Verificar longitud del local-part
     if signature.local_part_length_max > 0:
@@ -182,16 +198,31 @@ def score_against_signature(
             <= comp.local_part_length
             <= signature.local_part_length_max * 1.3
         )
-        score += 1.0 if in_range else 0.0
-        factors += 1
+        w_len = 2.0
+        total_weighted_score += (1.0 if in_range else 0.0) * w_len
+        total_weight += w_len
 
-    # Verificar dominio conocido
+    # Verificar dominio conocido (peso alto)
     if signature.domains and comp.domain:
-        domain_known = comp.domain in signature.domains
-        score += 1.0 if domain_known else 0.2
-        factors += 1
+        comp_dom = comp.domain.lower()
+        domain_known = any(
+            comp_dom == d.lower()
+            or comp_dom.endswith("." + d.lower())
+            or d.lower().endswith("." + comp_dom)
+            for d in signature.domains
+        )
+        w_dom = 3.0
+        total_weighted_score += (1.0 if domain_known else 0.0) * w_dom
+        total_weight += w_dom
 
-    if factors == 0:
+    # Verificar proveedor (ESP) coherente con la línea base
+    if signature.top_providers and comp.provider != "Unknown":
+        provider_known = comp.provider in signature.top_providers
+        w_prov = 2.0
+        total_weighted_score += (1.0 if provider_known else 0.0) * w_prov
+        total_weight += w_prov
+
+    if total_weight == 0:
         return 0.5
 
-    return round(score / factors, 3)
+    return round(total_weighted_score / total_weight, 3)

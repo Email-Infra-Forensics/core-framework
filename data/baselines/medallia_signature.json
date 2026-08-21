@@ -1,0 +1,26 @@
+{
+  "org_id": "medallia",
+  "sample_count": 18,
+  "uuid_freq": 0.0,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.0,
+  "hex_block_freq": 0.0,
+  "counter_freq": 0.0,
+  "local_part_length_min": 21,
+  "local_part_length_max": 22,
+  "local_part_length_mean": 21.6,
+  "segment_count_min": 2,
+  "segment_count_max": 2,
+  "segment_count_mean": 2.0,
+  "domains": [
+    "express.medallia.com",
+    "express.sea1.medallia.com"
+  ],
+  "top_prefixes": [
+    "mp",
+    "mi",
+    "mfd",
+    "log",
+    "lokg"
+  ]
+}

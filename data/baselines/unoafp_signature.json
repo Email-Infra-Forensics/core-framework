@@ -1,0 +1,41 @@
+{
+  "org_id": "unoafp",
+  "sample_count": 23,
+  "uuid_freq": 0.087,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.0,
+  "hex_block_freq": 0.087,
+  "counter_freq": 0.087,
+  "local_part_length_min": 22,
+  "local_part_length_max": 60,
+  "local_part_length_mean": 25.3,
+  "segment_count_min": 1,
+  "segment_count_max": 7,
+  "segment_count_mean": 2.1,
+  "domains": [
+    "geopod-ismtpd-0",
+    "geopod-ismtpd-1",
+    "geopod-ismtpd-10",
+    "geopod-ismtpd-11",
+    "geopod-ismtpd-12",
+    "geopod-ismtpd-13",
+    "geopod-ismtpd-14",
+    "geopod-ismtpd-15",
+    "geopod-ismtpd-16",
+    "geopod-ismtpd-2",
+    "geopod-ismtpd-3",
+    "geopod-ismtpd-4",
+    "geopod-ismtpd-5",
+    "geopod-ismtpd-7",
+    "geopod-ismtpd-8",
+    "geopod-ismtpd-canary-0",
+    "us-west-2.amazonses.com"
+  ],
+  "top_prefixes": [
+    "CthdUW",
+    "JTBtnt",
+    "Ri",
+    "XH",
+    "pSZtWA"
+  ]
+}

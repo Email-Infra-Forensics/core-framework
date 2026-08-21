@@ -1,0 +1,19 @@
+{
+  "org_id": "altmisnews",
+  "sample_count": 41,
+  "uuid_freq": 0.0,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.0,
+  "hex_block_freq": 0.0,
+  "counter_freq": 0.0,
+  "local_part_length_min": 26,
+  "local_part_length_max": 29,
+  "local_part_length_mean": 27.5,
+  "segment_count_min": 6,
+  "segment_count_max": 6,
+  "segment_count_mean": 6.0,
+  "domains": [
+    "d20c.emsend2.com"
+  ],
+  "top_prefixes": []
+}

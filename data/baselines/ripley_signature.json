@@ -1,0 +1,25 @@
+{
+  "org_id": "ripley",
+  "sample_count": 55,
+  "uuid_freq": 0.0,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.236,
+  "hex_block_freq": 1.0,
+  "counter_freq": 1.0,
+  "local_part_length_min": 42,
+  "local_part_length_max": 46,
+  "local_part_length_mean": 44.5,
+  "segment_count_min": 4,
+  "segment_count_max": 4,
+  "segment_count_mean": 4.0,
+  "domains": [
+    "ap41-ca-ue1.prod.awspr",
+    "bg21-ca-ue1.prod.awspr",
+    "bg22-ca-ue1.prod.awspr",
+    "bg23-ca-ue1.prod.awspr",
+    "bg32-ca-ue1.prod.awspr",
+    "bg41-ca-ue1.prod.awspr",
+    "bg42-ca-ue1.prod.awspr"
+  ],
+  "top_prefixes": []
+}

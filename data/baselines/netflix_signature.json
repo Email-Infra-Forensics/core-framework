@@ -1,0 +1,22 @@
+{
+  "org_id": "netflix",
+  "sample_count": 89,
+  "uuid_freq": 1.0,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.0,
+  "hex_block_freq": 1.0,
+  "counter_freq": 1.0,
+  "local_part_length_min": 60,
+  "local_part_length_max": 60,
+  "local_part_length_mean": 60.0,
+  "segment_count_min": 7,
+  "segment_count_max": 7,
+  "segment_count_mean": 7.0,
+  "domains": [
+    "email.amazonses.com",
+    "eu-west-1.amazonses.com",
+    "us-east-2.amazonses.com",
+    "us-west-2.amazonses.com"
+  ],
+  "top_prefixes": []
+}

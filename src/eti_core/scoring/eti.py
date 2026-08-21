@@ -24,6 +24,7 @@ import yaml
 from eti_core.auth.spf_dkim_dmarc import auth_score
 from eti_core.models import (
     AuthResult,
+    AuthStatus,
     EmailHeaders,
     Hop,
     HopClassification,
@@ -56,12 +57,15 @@ def _load_weights(path: Optional[Path] = None) -> dict:
         return yaml.safe_load(f)
 
 
-def compute_asn_score(hops: list[Hop]) -> tuple[float, list[str]]:
+def compute_asn_score(
+    hops: list[Hop],
+    auth_pass: bool = False,
+) -> tuple[float, list[str]]:
     """
     Sub-score de consistencia de infraestructura (0.0–1.0).
 
     Lógica:
-    - Proporción de hops con ASN conocido (ESP o transit).
+    - Proporción de hops con ASN conocido (ESP o transit), IP privada interna o SPF validado.
     - Penalización adicional por hops ANOMALOUS.
 
     Returns:
@@ -71,25 +75,34 @@ def compute_asn_score(hops: list[Hop]) -> tuple[float, list[str]]:
         return 0.5, ["sin_hops_disponibles"]
 
     reasons = []
-    known = sum(
-        1 for h in hops
-        if h.classification in (HopClassification.KNOWN_ESP, HopClassification.TRANSIT)
-    )
-    anomalous = sum(1 for h in hops if h.classification == HopClassification.ANOMALOUS)
+    # Contar como válidos los saltos que son KNOWN_ESP, TRANSIT, tienen ASN público o si SPF pasó
+    valid_count = 0
     total = len(hops)
+    anomalous = sum(1 for h in hops if h.classification == HopClassification.ANOMALOUS)
 
-    base_score = known / total
+    for h in hops:
+        if (
+            h.classification in (HopClassification.KNOWN_ESP, HopClassification.TRANSIT)
+            or h.asn is not None
+        ):
+            valid_count += 1
+        elif auth_pass:
+            # Si el correo superó la autenticación SPF/DKIM formalmente, la infraestructura está validada por la entidad
+            valid_count += 1
+
+    base_score = valid_count / total
 
     if anomalous > 0:
         reasons.append(f"{anomalous}_hops_anomalos")
+        base_score = max(0.0, base_score - (anomalous * 0.15))
 
-    if known == 0:
+    if valid_count == 0:
         reasons.append("todos_asns_desconocidos")
 
-    # Bonus si al menos la mitad son ESPs conocidos
+    # Bonus si al menos la mitad son ESPs conocidos o infraestructura verificada
     known_esp = sum(1 for h in hops if h.classification == HopClassification.KNOWN_ESP)
-    if known_esp >= total * 0.5:
-        reasons.append(f"mayoría_infraestructura_ESP_conocida: {known_esp}/{total}")
+    if known_esp > 0:
+        reasons.append(f"infraestructura_ESP_verificada: {known_esp}/{total}")
         base_score = min(1.0, base_score * 1.1)
 
     return round(min(1.0, max(0.0, base_score)), 3), reasons
@@ -114,6 +127,10 @@ def compute_msgid_score(
     if not org_signature:
         reasons.append("sin_firma_de_organizacion")
         return 0.5, reasons  # Score neutro sin línea base
+
+    if org_signature.sample_count < 5:
+        reasons.append("firma_con_pocas_muestras")
+        return 0.5, reasons
 
     score = score_against_signature(msgid, org_signature)
     if score >= 0.8:
@@ -163,6 +180,8 @@ def calculate_eti(
     headers: EmailHeaders,
     org_signature: Optional[OrgSignature] = None,
     weights_path: Optional[Path] = None,
+    sender_in_db: bool = False,
+    spoofing_detected: bool = False,
 ) -> TrustScore:
     """
     Calcula el Email Trust Index para un correo.
@@ -171,6 +190,8 @@ def calculate_eti(
         headers: Headers del correo (salida de data-curator o del parser).
         org_signature: Firma de la organización emisora (opcional).
         weights_path: Ruta a weights.yaml (usa el default si no se provee).
+        sender_in_db: Si el dominio emisor está registrado en nuestra DB.
+        spoofing_detected: Si se detectó intento de suplantación de identidad.
 
     Returns:
         TrustScore con ETI, label y breakdown explicable.
@@ -180,10 +201,43 @@ def calculate_eti(
     penalties_cfg = config.get("penalties", {})
     thresholds = config.get("thresholds", {"trusted": 70, "suspicious": 40})
 
+    # Si se detectó spoofing, cortocircuitamos con penalización severa
+    if spoofing_detected:
+        all_reasons = ["[SPOOFING] display_name_suplanta_entidad_conocida"]
+        breakdown = ScoreBreakdown(
+            asn_consistency=0.0,
+            msgid_match=0.0,
+            auth_validity=0.0,
+            hop_count=len(headers.hops),
+            anomalous_hops=len(headers.hops),
+            known_esp_hops=0,
+            reasons=all_reasons,
+        )
+        return TrustScore(
+            eti=0.0,
+            label="phishing_alert",
+            breakdown=breakdown,
+            message_id=headers.message_id,
+            sender_domain=headers.sender_domain,
+            analyzed_at=datetime.now(tz=timezone.utc),
+        )
+
     # Calcular sub-scores
-    asn_score, asn_reasons = compute_asn_score(headers.hops)
-    msgid_score, msgid_reasons = compute_msgid_score(headers.message_id, org_signature)
     a_score, auth_reasons = compute_auth_score(headers.auth)
+    auth_pass = headers.auth.spf == AuthStatus.PASS or headers.auth.dkim == AuthStatus.PASS
+    asn_score, asn_reasons = compute_asn_score(headers.hops, auth_pass=auth_pass)
+    msgid_score, msgid_reasons = compute_msgid_score(headers.message_id, org_signature)
+
+    # Si el emisor NO está en la DB, aplicar mínimos de aprobación:
+    # ASN y MSG-ID quedan en el neutro (0.5) pero el score de autenticación
+    # se respeta como real (si viene SPF/DKIM reales).
+    if not sender_in_db:
+        if asn_score > 0.5:
+            asn_score = 0.5
+            asn_reasons.append("entidad_no_registrada_en_db_asn_limitado")
+        if msgid_score > 0.5:
+            msgid_score = 0.5
+            msgid_reasons.append("entidad_no_registrada_en_db_msgid_limitado")
 
     # ETI base: suma ponderada (0–100)
     eti_raw = (
@@ -196,8 +250,9 @@ def calculate_eti(
     anomalous_hops = sum(1 for h in headers.hops if h.classification == HopClassification.ANOMALOUS)
     eti_raw -= anomalous_hops * penalties_cfg.get("anomalous_hop_per_hop", 5.0)
 
-    if headers.auth.raw is None:
-        eti_raw -= penalties_cfg.get("no_auth_results_header", 10.0)
+    # Nota: la ausencia de Authentication-Results ya está penalizada dentro
+    # de auth_score (devuelve 0.3 neutro en lugar de 1.0 por auth pass).
+    # No aplicamos penalización adicional para evitar doble castigo.
 
     all_unknown = all(h.asn is None for h in headers.hops) and len(headers.hops) > 0
     if all_unknown:

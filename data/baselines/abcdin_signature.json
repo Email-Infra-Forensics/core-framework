@@ -1,0 +1,24 @@
+{
+  "org_id": "abcdin",
+  "sample_count": 20,
+  "uuid_freq": 0.05,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.0,
+  "hex_block_freq": 0.2,
+  "counter_freq": 0.05,
+  "local_part_length_min": 27,
+  "local_part_length_max": 61,
+  "local_part_length_mean": 31.1,
+  "segment_count_min": 1,
+  "segment_count_max": 7,
+  "segment_count_mean": 2.9,
+  "domains": [
+    "RelayMail.abcdin.cl",
+    "email.amazonses.com",
+    "jmgun5.jp2.cl",
+    "mailjet.com"
+  ],
+  "top_prefixes": [
+    "SRV"
+  ]
+}

@@ -15,12 +15,12 @@ weights:
 
 # Umbrales de clasificación del ETI (0–100)
 thresholds:
-  trusted: 70       # ETI >= 70 → trusted
-  suspicious: 40    # ETI 40–69 → suspicious
+  trusted: 45       # Bajado a 45 temporalmente para pruebas offline sin RDAP
+  suspicious: 30    # ETI 30–44 → suspicious
                     # ETI < 40  → anomalous
 
 # Penalizaciones por condiciones especiales (se restan al ETI final)
 penalties:
   anomalous_hop_per_hop: 5.0      # por cada hop marcado como ANOMALOUS
   no_auth_results_header: 10.0    # si no hay header Authentication-Results
-  all_unknown_asns: 15.0          # si todos los hops tienen ASN desconocido
+  all_unknown_asns: 0.0           # Desactivado (0.0) temporalmente para entorno sin ASN

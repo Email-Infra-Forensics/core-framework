@@ -1,0 +1,28 @@
+{
+  "org_id": "provida",
+  "sample_count": 243,
+  "uuid_freq": 0.008,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.008,
+  "hex_block_freq": 0.012,
+  "counter_freq": 0.033,
+  "local_part_length_min": 13,
+  "local_part_length_max": 38,
+  "local_part_length_mean": 35.8,
+  "segment_count_min": 1,
+  "segment_count_max": 5,
+  "segment_count_mean": 3.0,
+  "domains": [
+    "ADVLDPDF01.afp.bbvaprovida.cl",
+    "AFPINTERLAT4",
+    "adobe-campaign.com",
+    "afpinterlat1",
+    "inf.provida.cl",
+    "provida.cl",
+    "retiro.provida.cl",
+    "ustry1basv01a9a.metlife.com"
+  ],
+  "top_prefixes": [
+    "NM"
+  ]
+}

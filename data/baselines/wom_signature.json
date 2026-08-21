@@ -1,0 +1,30 @@
+{
+  "org_id": "wom",
+  "sample_count": 243,
+  "uuid_freq": 0.0,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.016,
+  "hex_block_freq": 0.922,
+  "counter_freq": 0.992,
+  "local_part_length_min": 22,
+  "local_part_length_max": 51,
+  "local_part_length_mean": 38.7,
+  "segment_count_min": 1,
+  "segment_count_max": 5,
+  "segment_count_mean": 2.1,
+  "domains": [
+    "cl1.fidelizador.org",
+    "geopod-ismtpd-16",
+    "mail.gmail.com",
+    "mso-vm-uip21",
+    "srv40187-1-0-11-5zptm",
+    "srv40187-1-0-11-xhzgg",
+    "srv40187-1-0-9-dlhq7",
+    "srv40187-1-0-9-dn4fr",
+    "srv40187-1-0-9-l6zbj"
+  ],
+  "top_prefixes": [
+    "CABPSJ",
+    "RUtHJ"
+  ]
+}

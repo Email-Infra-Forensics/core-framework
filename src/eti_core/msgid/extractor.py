@@ -17,6 +17,8 @@ import re
 from dataclasses import dataclass, field
 from typing import Optional
 
+from eti_core.msgid.provider_rules import detect_provider
+
 
 # ---------------------------------------------------------------------------
 # Regex de componentes comunes en Message-ID local-parts
@@ -62,6 +64,9 @@ class MessageIDComponents:
     # Prefijo literal (ej: "msg-", "CAHp", etc.)
     prefix: Optional[str] = None
 
+    # Proveedor ESP detectado algorítmicamente (Google, Microsoft, etc.)
+    provider: str = "Unknown"
+
     def to_feature_vector(self) -> dict:
         """Devuelve features para análisis/clustering."""
         return {
@@ -75,6 +80,7 @@ class MessageIDComponents:
             "domain": self.domain or "",
             "prefix": self.prefix or "",
             "separators": ".".join(sorted(set(self.separators))),
+            "provider": self.provider,
         }
 
 
@@ -132,6 +138,9 @@ def extract_msgid_components(raw_msgid: str) -> Optional[MessageIDComponents]:
     prefix_m = re.match(r"^([a-zA-Z]{2,6})", local_part)
     if prefix_m:
         comp.prefix = prefix_m.group(1)
+
+    # Detección algorítmica del ESP
+    comp.provider = detect_provider(raw_msgid)
 
     return comp
 

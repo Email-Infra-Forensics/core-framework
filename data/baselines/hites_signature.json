@@ -1,0 +1,31 @@
+{
+  "org_id": "hites",
+  "sample_count": 711,
+  "uuid_freq": 0.037,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.01,
+  "hex_block_freq": 0.045,
+  "counter_freq": 0.989,
+  "local_part_length_min": 22,
+  "local_part_length_max": 60,
+  "local_part_length_mean": 58.7,
+  "segment_count_min": 1,
+  "segment_count_max": 7,
+  "segment_count_mean": 6.8,
+  "domains": [
+    "blade4-5.mon.demandware.net",
+    "blade5-1.mon.demandware.net",
+    "blade7-3.mon.demandware.net",
+    "geopod-ismtpd-24",
+    "hi-prod-app-remu-01.c.hi-gcp-prod.internal",
+    "jmgun2.jp2.cl",
+    "mail.gmail.com",
+    "pudal09hitwclapp03.dal09.caas.local",
+    "us-west-2.amazonses.com"
+  ],
+  "top_prefixes": [
+    "CAF",
+    "zy",
+    "CABV"
+  ]
+}

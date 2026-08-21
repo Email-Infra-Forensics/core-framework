@@ -131,3 +131,63 @@ class TestCalculateETI:
         assert score.eti > 0  # Al menos algo de score
         # El label puede ser anomalous sin RDAP (ASN desconocido penaliza mucho)
         assert score.label in ("trusted", "suspicious", "anomalous")
+
+
+class TestSpoofingAndUnknownEntity:
+    def test_spoofing_detected_returns_phishing_alert(self):
+        """Cuando se detecta spoofing, ETI debe ser 0.0 y label phishing_alert."""
+        headers = _make_headers()
+        score = calculate_eti(headers, spoofing_detected=True)
+        assert score.eti == 0.0
+        assert score.label == "phishing_alert"
+        assert any("SPOOFING" in r for r in score.breakdown.reasons)
+
+    def test_sender_not_in_db_caps_asn_and_msgid(self):
+        """Si el emisor no está en la DB, ASN y MSGID quedan en máximo 0.5."""
+        hop = _make_hop_known()
+        auth = AuthResult(
+            spf=AuthStatus.PASS,
+            dkim=AuthStatus.PASS,
+            dmarc=AuthStatus.PASS,
+            raw="header",
+        )
+        headers = _make_headers(hops=[hop, hop, hop], auth=auth, message_id="<test@example.com>")
+        score = calculate_eti(headers, sender_in_db=False)
+        assert score.breakdown.asn_consistency <= 0.5
+        assert score.breakdown.msgid_match <= 0.5
+
+    def test_sender_in_db_allows_full_asn_score(self):
+        """Si el emisor está en la DB, el ASN puede superar 0.5."""
+        hop = _make_hop_known()
+        auth = AuthResult(
+            spf=AuthStatus.PASS,
+            dkim=AuthStatus.PASS,
+            dmarc=AuthStatus.PASS,
+            raw="header",
+        )
+        headers = _make_headers(hops=[hop, hop, hop], auth=auth, message_id="<test@example.com>")
+        score = calculate_eti(headers, sender_in_db=True)
+        # Con 3 hops KNOWN_ESP, el ASN score debe ser > 0.5
+        assert score.breakdown.asn_consistency > 0.5
+
+    def test_no_auth_header_penalized(self):
+        """Sin Authentication-Results, se aplica penalización de -10 pts."""
+        headers_no_auth = _make_headers(auth=AuthResult(raw=None))
+        headers_with_auth = _make_headers(auth=AuthResult(
+            raw="header",
+            spf=AuthStatus.PASS,
+            dkim=AuthStatus.PASS,
+        ))
+        score_no = calculate_eti(headers_no_auth)
+        score_yes = calculate_eti(headers_with_auth)
+        assert score_no.eti < score_yes.eti
+
+
+def _make_hop_known() -> Hop:
+    return Hop(
+        index=0,
+        raw="from mx.example.com (unknown [209.85.220.41]) by google.com",
+        ip="209.85.220.41",
+        classification=HopClassification.KNOWN_ESP,
+    )
+
