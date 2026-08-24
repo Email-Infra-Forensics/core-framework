@@ -1,11 +1,11 @@
 {
   "org_id": "uber",
-  "sample_count": 265,
-  "uuid_freq": 0.996,
-  "timestamp_compact_freq": 0.004,
+  "sample_count": 606,
+  "uuid_freq": 0.998,
+  "timestamp_compact_freq": 0.002,
   "epoch_ts_freq": 0.0,
-  "hex_block_freq": 0.004,
-  "counter_freq": 0.449,
+  "hex_block_freq": 0.002,
+  "counter_freq": 0.446,
   "local_part_length_min": 31,
   "local_part_length_max": 36,
   "local_part_length_mean": 36.0,
@@ -17,10 +17,13 @@
     "mgm.uber.com"
   ],
   "top_prefixes": [
+    "de",
+    "bc",
     "cc",
     "ff",
-    "bc",
-    "afed",
-    "fdcc"
+    "bf"
+  ],
+  "top_providers": [
+    "Native (Postfix/Exim)"
   ]
 }

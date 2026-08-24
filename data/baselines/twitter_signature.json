@@ -1,0 +1,26 @@
+{
+  "org_id": "twitter",
+  "sample_count": 424,
+  "uuid_freq": 0.0,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.0,
+  "hex_block_freq": 0.0,
+  "counter_freq": 1.0,
+  "local_part_length_min": 20,
+  "local_part_length_max": 20,
+  "local_part_length_mean": 20.0,
+  "segment_count_min": 4,
+  "segment_count_max": 4,
+  "segment_count_mean": 4.0,
+  "domains": [
+    "twitter.com"
+  ],
+  "top_prefixes": [
+    "DE",
+    "EF",
+    "AD",
+    "CC",
+    "CA"
+  ],
+  "top_providers": []
+}

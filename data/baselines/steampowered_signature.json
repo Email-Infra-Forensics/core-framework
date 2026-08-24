@@ -1,0 +1,23 @@
+{
+  "org_id": "steampowered",
+  "sample_count": 20,
+  "uuid_freq": 0.0,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.0,
+  "hex_block_freq": 0.0,
+  "counter_freq": 0.0,
+  "local_part_length_min": 17,
+  "local_part_length_max": 24,
+  "local_part_length_mean": 18.1,
+  "segment_count_min": 3,
+  "segment_count_max": 3,
+  "segment_count_mean": 3.0,
+  "domains": [
+    "smtp-01-tuk1.steampowered.com",
+    "smtp-02-tuk1.steampowered.com",
+    "smtp-03-tuk1.steampowered.com",
+    "smtp-04-tuk1.steampowered.com"
+  ],
+  "top_prefixes": [],
+  "top_providers": []
+}

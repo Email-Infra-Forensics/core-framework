@@ -1,0 +1,24 @@
+{
+  "org_id": "facebook",
+  "sample_count": 10,
+  "uuid_freq": 0.1,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.0,
+  "hex_block_freq": 0.9,
+  "counter_freq": 0.0,
+  "local_part_length_min": 32,
+  "local_part_length_max": 36,
+  "local_part_length_mean": 32.4,
+  "segment_count_min": 1,
+  "segment_count_max": 5,
+  "segment_count_mean": 1.4,
+  "domains": [
+    "2d4a6334d2f2bb73c1c106ccaf5b5e83c5a47abe274260dadc6a33286199d452",
+    "support.facebook.com"
+  ],
+  "top_prefixes": [
+    "dc",
+    "ed"
+  ],
+  "top_providers": []
+}

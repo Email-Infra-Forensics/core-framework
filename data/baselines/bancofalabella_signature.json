@@ -1,11 +1,11 @@
 {
   "org_id": "bancofalabella",
-  "sample_count": 481,
-  "uuid_freq": 0.923,
+  "sample_count": 510,
+  "uuid_freq": 0.914,
   "timestamp_compact_freq": 0.0,
   "epoch_ts_freq": 0.0,
   "hex_block_freq": 0.0,
-  "counter_freq": 0.395,
+  "counter_freq": 0.392,
   "local_part_length_min": 30,
   "local_part_length_max": 48,
   "local_part_length_mean": 35.7,
@@ -22,8 +22,10 @@
     "ind1s06mta0340.xt.local",
     "ind1s06mta0341.xt.local",
     "ind1s06mta0343.xt.local",
+    "ind1s06mta0346.xt.local",
     "ind1s06mta1561.xt.local",
     "ind1s06mta1633.xt.local",
+    "ind1s06mta1635.xt.local",
     "ind1s06mta1636.xt.local",
     "ind1s06mta1637.xt.local",
     "ind1s06mta1638.xt.local",
@@ -47,8 +49,9 @@
   "top_prefixes": [
     "eb",
     "fe",
+    "ae",
     "cf",
-    "db",
-    "aa"
-  ]
+    "db"
+  ],
+  "top_providers": []
 }

@@ -1,0 +1,39 @@
+{
+  "org_id": "scotiabank",
+  "sample_count": 235,
+  "uuid_freq": 0.868,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.051,
+  "hex_block_freq": 0.0,
+  "counter_freq": 0.515,
+  "local_part_length_min": 36,
+  "local_part_length_max": 50,
+  "local_part_length_mean": 37.5,
+  "segment_count_min": 5,
+  "segment_count_max": 5,
+  "segment_count_mean": 5.0,
+  "domains": [
+    "CLLAVLPR1AS0026",
+    "CLLAVLPR1AS0027",
+    "CLLVVLPR1AS0025",
+    "CLLVVLPR1AS0029.chl.bns",
+    "iad4s13mta0405.xt.local",
+    "iad4s13mta0407.xt.local",
+    "iad4s13mta0409.xt.local",
+    "iad4s13mta0411.xt.local",
+    "iad4s13mta0413.xt.local",
+    "iad4s13mta1361.xt.local",
+    "iad4s13mta1363.xt.local",
+    "iad4s13mta1365.xt.local",
+    "iad4s13mta1367.xt.local",
+    "iad4s13mta1369.xt.local"
+  ],
+  "top_prefixes": [
+    "ca",
+    "fb",
+    "cd",
+    "ae",
+    "fc"
+  ],
+  "top_providers": []
+}

@@ -1,0 +1,26 @@
+{
+  "org_id": "blizzard",
+  "sample_count": 13,
+  "uuid_freq": 0.0,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.231,
+  "hex_block_freq": 0.0,
+  "counter_freq": 1.0,
+  "local_part_length_min": 31,
+  "local_part_length_max": 33,
+  "local_part_length_mean": 32.2,
+  "segment_count_min": 3,
+  "segment_count_max": 3,
+  "segment_count_mean": 3.0,
+  "domains": [
+    "las1a-us-bn-ac-nexus-notification-prod-blue-00.las1a.cloud.blizzard.net",
+    "las1a-us-bn-ac-nexus-notification-prod-blue-01.las1a.cloud.blizzard.net",
+    "las1a-us-bn-ac-nexus-notification-prod-red-00.las1a.cloud.blizzard.net",
+    "las1a-us-bn-client-tomcat-nexus-notif-01.las1a.cloud.blizzard.net",
+    "las1a-us-bn-client-tomcat-nexus-notif-gen-01.las1a.cloud.blizzard.net",
+    "las1b-us-bn-ac-nexus-notification-prod-blue-00.las1b.cloud.blizzard.net",
+    "las1b-us-bn-ac-nexus-notification-prod-red-01.las1b.cloud.blizzard.net"
+  ],
+  "top_prefixes": [],
+  "top_providers": []
+}

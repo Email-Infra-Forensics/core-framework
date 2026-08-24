@@ -1,0 +1,29 @@
+{
+  "org_id": "shein",
+  "sample_count": 10,
+  "uuid_freq": 0.0,
+  "timestamp_compact_freq": 0.1,
+  "epoch_ts_freq": 0.0,
+  "hex_block_freq": 0.6,
+  "counter_freq": 0.0,
+  "local_part_length_min": 27,
+  "local_part_length_max": 64,
+  "local_part_length_mean": 46.4,
+  "segment_count_min": 1,
+  "segment_count_max": 6,
+  "segment_count_mean": 3.2,
+  "domains": [
+    "mail.market.shein.com",
+    "mta-2d57c517.ip4.emsmtp.us",
+    "mta-2d57c519.ip4.emsmtp.us",
+    "mta-2d57c523.ip4.emsmtp.us",
+    "mta-2d57c549.ip4.emsmtp.us",
+    "news.cl.shein.com",
+    "news.market.shein.com"
+  ],
+  "top_prefixes": [
+    "eb",
+    "fc"
+  ],
+  "top_providers": []
+}

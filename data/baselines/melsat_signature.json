@@ -1,0 +1,26 @@
+{
+  "org_id": "melsat",
+  "sample_count": 26,
+  "uuid_freq": 0.0,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.0,
+  "hex_block_freq": 0.0,
+  "counter_freq": 0.0,
+  "local_part_length_min": 39,
+  "local_part_length_max": 43,
+  "local_part_length_mean": 41.8,
+  "segment_count_min": 1,
+  "segment_count_max": 1,
+  "segment_count_mean": 1.0,
+  "domains": [
+    "sucursal"
+  ],
+  "top_prefixes": [
+    "diDeON",
+    "drEfUb",
+    "mC",
+    "ATNGbu",
+    "bTqi"
+  ],
+  "top_providers": []
+}

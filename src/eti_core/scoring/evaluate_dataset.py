@@ -105,24 +105,33 @@ def main():
                     stats["unknown_labels"] += 1
                     continue
                     
-                sender_domain = data.get("sender_domain", "")
+                from eti_core.scoring.characterization import get_org_for_domain, EXPLICIT_GROUPS
+
+                sender_domain = data.get("sender_domain") or ""
+                sender_domain_lower = sender_domain.lower() if sender_domain else ""
                 
-                # Inferencia básica de organización (simplificada)
-                org_name = sender_domain.split('.')[-2] if '.' in sender_domain else sender_domain
+                # Inferencia precisa de organización
+                org_name = get_org_for_domain(sender_domain_lower) if sender_domain_lower else None
+                sender_in_db = False
+                org_sig = None
+
+                if org_name and org_name in signatures:
+                    org_sig = signatures[org_name]
+                    sender_in_db = True
+                elif org_name and org_name in EXPLICIT_GROUPS:
+                    sender_in_db = True
                 
                 headers = EmailHeaders(
                     message_id=data.get("message_id_raw"),
-                    from_address=data.get("from_address", ""),
-                    to_address=data.get("to_address", ""),
+                    from_address=data.get("from_address", "") or "unknown",
+                    to_address=data.get("to_address", "") or "unknown",
                     hops=[_convert_hop(h) for h in data.get("received_hops", [])],
                     auth=_convert_auth(data.get("authentication_results_raw")),
-                    sender_domain=sender_domain
+                    sender_domain=sender_domain or None
                 )
                 
-                org_sig = signatures.get(org_name)
-                
                 # Calcular ETI
-                score = calculate_eti(headers, org_signature=org_sig)
+                score = calculate_eti(headers, org_signature=org_sig, sender_in_db=sender_in_db)
                 
                 # Comparar con ground truth
                 eti_label = score.label  # "trusted", "suspicious", "anomalous"

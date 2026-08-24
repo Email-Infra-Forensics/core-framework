@@ -1,20 +1,21 @@
 {
   "org_id": "tenpo",
-  "sample_count": 482,
+  "sample_count": 485,
   "uuid_freq": 0.0,
-  "timestamp_compact_freq": 0.006,
-  "epoch_ts_freq": 0.12,
+  "timestamp_compact_freq": 0.01,
+  "epoch_ts_freq": 0.122,
   "hex_block_freq": 0.0,
-  "counter_freq": 0.28,
+  "counter_freq": 0.282,
   "local_part_length_min": 22,
   "local_part_length_max": 94,
   "local_part_length_mean": 24.9,
   "segment_count_min": 1,
   "segment_count_max": 10,
-  "segment_count_mean": 2.0,
+  "segment_count_mean": 2.1,
   "domains": [
     "automation.freshdesk.com",
     "email.freshdesk.com",
+    "email.tenpo.cl",
     "geopod-ismtpd-0",
     "geopod-ismtpd-1",
     "geopod-ismtpd-10",
@@ -119,7 +120,8 @@
     "geopod-ismtpd-canary-0",
     "ip-10-11-51-207.eu-west-1.compute.internal",
     "ip-10-11-51-216.eu-west-1.compute.internal",
-    "multicaja.activehosted.com"
+    "multicaja.activehosted.com",
+    "paypal.mail"
   ],
   "top_prefixes": [
     "uM",
@@ -127,5 +129,6 @@
     "HAzGCW",
     "fX",
     "mXIGzr"
-  ]
+  ],
+  "top_providers": []
 }

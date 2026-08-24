@@ -1,0 +1,24 @@
+{
+  "org_id": "zapping",
+  "sample_count": 12,
+  "uuid_freq": 0.25,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.75,
+  "hex_block_freq": 0.0,
+  "counter_freq": 0.833,
+  "local_part_length_min": 36,
+  "local_part_length_max": 52,
+  "local_part_length_mean": 48.0,
+  "segment_count_min": 5,
+  "segment_count_max": 5,
+  "segment_count_mean": 5.0,
+  "domains": [
+    "mtasv.net",
+    "outbound.intercom.zapping.com"
+  ],
+  "top_prefixes": [
+    "cdca",
+    "ae"
+  ],
+  "top_providers": []
+}

@@ -1,0 +1,28 @@
+{
+  "org_id": "sii",
+  "sample_count": 14,
+  "uuid_freq": 0.0,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.071,
+  "hex_block_freq": 0.286,
+  "counter_freq": 1.0,
+  "local_part_length_min": 28,
+  "local_part_length_max": 44,
+  "local_part_length_mean": 37.1,
+  "segment_count_min": 2,
+  "segment_count_max": 5,
+  "segment_count_mean": 3.6,
+  "domains": [
+    "admin-cntr-ms-5cb6585999-9jplh",
+    "admin-cntr-ms-69797bf48b-xgq6s",
+    "callisto001.sii.cl",
+    "cl1.fidelizador.org",
+    "nuble012.sii.cl",
+    "proteus005.sii.cl",
+    "proteus105.sii.cl",
+    "proteus106.sii.cl",
+    "proteus108.sii.cl"
+  ],
+  "top_prefixes": [],
+  "top_providers": []
+}

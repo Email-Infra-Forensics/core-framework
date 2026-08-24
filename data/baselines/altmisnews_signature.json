@@ -15,5 +15,6 @@
   "domains": [
     "d20c.emsend2.com"
   ],
-  "top_prefixes": []
+  "top_prefixes": [],
+  "top_providers": []
 }

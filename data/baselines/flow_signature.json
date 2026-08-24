@@ -1,0 +1,26 @@
+{
+  "org_id": "flow",
+  "sample_count": 85,
+  "uuid_freq": 0.0,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.0,
+  "hex_block_freq": 0.824,
+  "counter_freq": 0.0,
+  "local_part_length_min": 32,
+  "local_part_length_max": 43,
+  "local_part_length_mean": 33.7,
+  "segment_count_min": 1,
+  "segment_count_max": 1,
+  "segment_count_mean": 1.0,
+  "domains": [
+    "www.flow.cl"
+  ],
+  "top_prefixes": [
+    "aa",
+    "ciHS",
+    "qF",
+    "yfnv",
+    "cda"
+  ],
+  "top_providers": []
+}

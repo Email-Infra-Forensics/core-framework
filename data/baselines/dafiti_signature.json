@@ -1,14 +1,14 @@
 {
   "org_id": "dafiti",
-  "sample_count": 262,
+  "sample_count": 266,
   "uuid_freq": 0.0,
   "timestamp_compact_freq": 0.0,
   "epoch_ts_freq": 0.0,
-  "hex_block_freq": 0.008,
-  "counter_freq": 0.87,
+  "hex_block_freq": 0.011,
+  "counter_freq": 0.861,
   "local_part_length_min": 20,
   "local_part_length_max": 51,
-  "local_part_length_mean": 21.6,
+  "local_part_length_mean": 21.8,
   "segment_count_min": 1,
   "segment_count_max": 7,
   "segment_count_mean": 4.1,
@@ -136,6 +136,7 @@
     "jb.mta1vrest.cc.prd.sparkpost",
     "jc.mta1vrest.cc.prd.sparkpost",
     "jd.mta1vrest.cc.prd.sparkpost",
+    "je.mta1vrest.cc.prd.sparkpost",
     "jf.mta1vrest.cc.prd.sparkpost",
     "jh.mta1vrest.cc.prd.sparkpost",
     "ji.mta1vrest.cc.prd.sparkpost",
@@ -178,13 +179,17 @@
     "ma.mta1vrest.cc.prd.sparkpost",
     "mail.gmail.com",
     "omptrans.newsletter.dafiti.cl",
+    "win-dbflq15vo9i",
     "win-g9v15lvnvqj"
   ],
   "top_prefixes": [
     "AE",
     "DB",
-    "BB",
     "CAOOzE",
+    "BB",
     "BC"
+  ],
+  "top_providers": [
+    "Google"
   ]
 }

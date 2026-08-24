@@ -1,17 +1,17 @@
 {
   "org_id": "paypal",
-  "sample_count": 75,
-  "uuid_freq": 0.28,
+  "sample_count": 121,
+  "uuid_freq": 0.174,
   "timestamp_compact_freq": 0.0,
-  "epoch_ts_freq": 0.013,
+  "epoch_ts_freq": 0.314,
   "hex_block_freq": 0.0,
-  "counter_freq": 0.773,
-  "local_part_length_min": 20,
+  "counter_freq": 0.81,
+  "local_part_length_min": 15,
   "local_part_length_max": 40,
-  "local_part_length_mean": 25.9,
+  "local_part_length_mean": 23.9,
   "segment_count_min": 1,
   "segment_count_max": 5,
-  "segment_count_mean": 4.1,
+  "segment_count_mean": 3.3,
   "domains": [
     "ccg01mail02",
     "ccg01mail04",
@@ -54,7 +54,8 @@
     "iad4s12mta1146.xt.local",
     "iad4s12mta498.xt.local",
     "iad4s12mta510.xt.local",
-    "mail.paypal.com"
+    "mail.paypal.com",
+    "paypal.com"
   ],
   "top_prefixes": [
     "HP",
@@ -62,5 +63,6 @@
     "ae",
     "ff",
     "ac"
-  ]
+  ],
+  "top_providers": []
 }

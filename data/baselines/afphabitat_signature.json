@@ -52,5 +52,8 @@
     "adee",
     "bd",
     "aebd"
+  ],
+  "top_providers": [
+    "Amazon SES"
   ]
 }

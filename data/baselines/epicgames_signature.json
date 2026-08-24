@@ -1,0 +1,27 @@
+{
+  "org_id": "epicgames",
+  "sample_count": 16,
+  "uuid_freq": 0.0,
+  "timestamp_compact_freq": 0.125,
+  "epoch_ts_freq": 0.0,
+  "hex_block_freq": 0.5,
+  "counter_freq": 0.0,
+  "local_part_length_min": 29,
+  "local_part_length_max": 41,
+  "local_part_length_mean": 36.2,
+  "segment_count_min": 1,
+  "segment_count_max": 2,
+  "segment_count_mean": 1.5,
+  "domains": [
+    "acct.epicgames.com",
+    "accts.epicgames.com",
+    "sailthru.com"
+  ],
+  "top_prefixes": [
+    "HP",
+    "mid"
+  ],
+  "top_providers": [
+    "Native (Postfix/Exim)"
+  ]
+}

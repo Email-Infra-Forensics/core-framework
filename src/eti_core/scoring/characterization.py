@@ -6,50 +6,119 @@ from collections import Counter, defaultdict
 
 from eti_core.msgid.signature import build_signature, OrgSignature
 
-# Mapeo explicito para agrupar marcas que usan dominios dispares
+# Mapeo explícito para agrupar marcas que usan dominios dispares
 EXPLICIT_GROUPS = {
-    "falabella": ["falabella.com", "cl.falabella.com", "mail.falabella.com", "experiencia.falabella.com", "falabella.cl", "cmr.cl", "notifica.cl.cmrfalabella.com", "cl.cmrfalabella.com", "sodimac.cl", "mail.sodimac.com", "cl.sodimac.com"],
+    "falabella": [
+        "falabella.com", "cl.falabella.com", "mail.falabella.com", "experiencia.falabella.com",
+        "falabella.cl", "cmr.cl", "notifica.cl.cmrfalabella.com", "cl.cmrfalabella.com",
+        "sodimac.cl", "mail.sodimac.com", "cl.sodimac.com"
+    ],
     "bancofalabella": ["bancofalabella.cl", "cl.bancofalabella.com", "bancofalabella.com"],
-    "mercadolibre": ["mercadolibre.cl", "r.mercadolibre.cl", "a.mercadolibre.cl", "mercadolibre.com", "info.mercadolibre.cl", "mercadopago.com", "a.mercadopago.com", "r.mercadopago.com"],
-    "bancoestado": ["bancoestado.cl", "correo.bancoestado.cl", "correobancoestado.cl", "emailbancoestado.cl", "microempresas.bancoestado.cl"],
+    "mercadolibre": [
+        "mercadolibre.cl", "r.mercadolibre.cl", "a.mercadolibre.cl", "mercadolibre.com",
+        "info.mercadolibre.cl", "mercadopago.com", "a.mercadopago.com", "r.mercadopago.com"
+    ],
+    "bancoestado": [
+        "bancoestado.cl", "correo.bancoestado.cl", "correobancoestado.cl", "emailbancoestado.cl",
+        "microempresas.bancoestado.cl", "regularizacion.bancoestado.cl", "bestado.cl"
+    ],
     "bancochile": ["bancochile.cl", "e.bancochile.cl", "comercial.bancochile.cl"],
-    "bci": ["bci.cl", "info.bci.cl", "mail.machbank.cl", "somosmach.com", "mail.somosmach.com"],
-    "wom": ["wom.cl", "news.wom.cl", "validacion.wom.cl"],
-    "movistar": ["emailmovistar.cl", "comunicaciones.movistar.cl", "notificaciones.movistar.cl"],
+    "bci": ["bci.cl", "info.bci.cl", "mail.machbank.cl", "somosmach.com", "mail.somosmach.com", "tbci.cl"],
+    "santander": ["santander.cl", "risk.santander.cl", "mensajeria.santander.cl"],
+    "scotiabank": ["scotiabank.cl", "hola.scotiabank.cl"],
+    "itau": ["itau.cl"],
+    "coopeuch": ["coopeuch.cl", "transaccionalcoopeuch.com"],
+    "tenpo": ["tenpo.cl"],
+    "prex": ["prexcard.cl"],
+    "khipu": ["khipu.com"],
     "servipag": ["servipag.cl", "servipag.com"],
+    "flow": ["flow.cl"],
+    "unired": ["pagos.unired.cl", "infounired.pagototal.cl"],
+    "provida": ["provida.cl", "inf.provida.cl"],
+    "afphabitat": ["afphabitat.cl", "email.afphabitat.cl", "informaciones.afphabitat.cl"],
+    "unoafp": ["unoafp.cl"],
+    "afpmodelo": ["afpmodelo.cl"],
+    "wom": ["wom.cl", "news.wom.cl", "validacion.wom.cl"],
+    "movistar": ["movistar.cl", "emailmovistar.cl", "comunicaciones.movistar.cl", "notificaciones.movistar.cl"],
+    "claro": ["clarochile.cl", "emailclarochile.cl", "servicio.emailclarochile.cl", "servicios.emailclarochile.cl"],
+    "entel": ["entel.cl"],
     "paris": ["paris.cl", "clientes.paris.cl", "mail.paris.cl", "email.paris.cl", "news.paris.cl", "cencosud.cl"],
-    "ripley": ["mensajetarjetaripley.cl", "mensajeriaripley.cl", "postventa.ripley.cl"],
+    "ripley": ["ripley.cl", "mensajetarjetaripley.cl", "mensajeriaripley.cl", "postventa.ripley.cl"],
     "hites": ["hites.com", "marketing.hites.com", "tarjeta.hites.com", "hites.cl"],
-    "google": ["google.com", "accounts.google.com"],
-    "paypal": ["emails.paypal.com", "intl.paypal.com", "mail.paypal.com"],
-    "spotify": ["spotify.com", "legal.spotify.com"],
+    "abcdin": ["abcdin.cl"],
+    "dafiti": ["dafiti.cl", "news.email.dafiti.cl", "newsletter.dafiti.cl"],
+    "cruzverde": ["cruzverde.cl", "mailcruzverde.cl"],
+    "google": ["google.com", "accounts.google.com", "docs.google.com", "gmail.com", "googlemail.com"],
+    "microsoft": [
+        "microsoft.com", "accountprotection.microsoft.com", "email2.microsoft.com",
+        "engage.microsoft.com", "e-mail.microsoft.com", "communication.microsoft.com",
+        "hotmail.com", "outlook.com", "live.com"
+    ],
+    "amazon": ["amazon.com", "bounces.amazon.com", "primevideo.com"],
+    "paypal": ["paypal.com", "emails.paypal.com", "intl.paypal.com", "mail.paypal.com", "communications.paypal.com"],
+    "spotify": ["spotify.com", "legal.spotify.com", "alerts.spotify.com"],
+    "netflix": ["netflix.com", "join.netflix.com", "account.netflix.com", "members.netflix.com"],
+    "facebook": ["facebook.com", "facebookmail.com", "id.facebook.com", "support.facebook.com"],
     "instagram": ["instagram.com", "mail.instagram.com", "e.instagram.com"],
-    "facebook": ["facebook.com", "facebookmail.com", "id.facebook.com"],
+    "linkedin": ["linkedin.com", "e.linkedin.com", "em.linkedin.com"],
+    "twitter": ["twitter.com", "x.com"],
     "apple": ["apple.com", "id.apple.com", "email.apple.com"],
-    "microsoft": ["microsoft.com", "accountprotection.microsoft.com", "email2.microsoft.com", "engage.microsoft.com"],
-    "amazon": ["amazon.com", "bounces.amazon.com"],
-    "tiktok": ["tiktok.com", "mail.tiktok.com"],
+    "tiktok": ["tiktok.com", "mail.tiktok.com", "service.tiktok.com"],
     "uber": ["uber.com", "email.uber.com"],
     "didi": ["didi.com", "didiglobal.com", "mx.didiglobal.com"],
-    "pedidosya": ["pedidosya.com", "em.pedidosya.com"]
+    "pedidosya": ["pedidosya.com", "em.pedidosya.com"],
+    "skyairline": ["skyairline.com", "mailskyplus.skyairline.com"],
+    "trello": ["trello.com"],
+    "steampowered": ["steampowered.com"],
+    "riotgames": ["riotgames.com", "mail.accounts.riotgames.com"],
+    "epicgames": ["epicgames.com", "acct.epicgames.com", "accts.epicgames.com"],
+    "blizzard": ["blizzard.com", "battle.net"],
+    "acepta": ["acepta.com", "paperless.cl"],
+    "sii": ["sii.cl", "e.sii.cl"],
+    "verisure": ["verisure.cl", "verisure.trytoku.com"],
+    "loyal": ["chile.loyal.ink"],
+    "happyfox": ["travelclub.happyfox.com"],
+    "melsat": ["melsat.cl"],
+    "eeccvirtual": ["eeccvirtual.cl"],
+    "medallia": ["express.medallia.com"],
+    "altmisnews": ["altmisnews.com"],
+    "e-com": ["e-com.cl"],
+    "buk": ["buk.cl", "mail.buk.cl", "app.buk.cl"],
+    "talana": ["talana.com", "mail.talana.com"],
 }
 
+# Lista de nombres de marcas conocidas para detección de suplantación (spoofing)
+KNOWN_BRAND_NAMES = [
+    "banco estado", "bancoestado", "banco de chile", "bancochile",
+    "bci", "santander", "banco santander", "falabella", "banco falabella", "cmr", "ripley", "paris",
+    "mercado libre", "mercadolibre", "mercado pago", "mercadopago", "itaú", "itau", "banco itau",
+    "scotiabank", "sii", "servicio de impuestos", "tenpo", "servipag", "afp habitat", "habitat",
+    "afp provida", "provida", "uno afp", "unoafp", "afp modelo", "coopeuch", "khipu", "flow",
+    "paypal", "netflix", "spotify", "amazon", "microsoft", "google", "apple", "uber", "pedidosya",
+    "linkedin", "twitter", "facebook", "instagram", "tiktok", "sky airline", "skyairline", "claro",
+    "movistar", "entel", "wom", "dafiti", "abcdin", "hites", "verisure", "trello", "steam"
+]
+
+
 def get_org_for_domain(domain: str) -> str:
-    """Clasifica un dominio en su organizacion paraguas, o infiere el nombre base."""
-    # Buscar en grupos explicitos
+    """Clasifica un dominio en su organización paraguas, o infiere el nombre base."""
+    if not domain:
+        return "unknown"
+    domain_lower = domain.lower().strip()
+    # Buscar en grupos explícitos
     for org, domains in EXPLICIT_GROUPS.items():
-        if domain in domains:
+        if domain_lower in domains or any(domain_lower.endswith("." + d) for d in domains):
             return org
             
-    # Si no esta, deducir la org a partir del second level domain
+    # Si no está, deducir la org a partir del second level domain
     # Ejemplo: mail.cruzverde.cl -> cruzverde
-    parts = domain.split('.')
+    parts = domain_lower.split('.')
     if len(parts) >= 2:
         # casos .com.ar, .com.br, etc.
         if parts[-2] in ('com', 'co', 'gob', 'gov', 'net', 'org', 'mil') and len(parts) > 2:
             return parts[-3]
         return parts[-2]
-    return domain
+    return domain_lower
 
 def main():
     jsonl_path = Path("/home/luval/Escritorio/Email-Trust/data-curator/data/out.jsonl")
@@ -112,7 +181,7 @@ def main():
     sorted_orgs = sorted(org_msgids.items(), key=lambda x: len(x[1]), reverse=True)
     
     for org, msgids in sorted_orgs:
-        if len(msgids) < 15:
+        if len(msgids) < 10:
             continue
             
         processed_count += 1

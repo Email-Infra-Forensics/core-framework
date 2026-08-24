@@ -1,0 +1,47 @@
+{
+  "org_id": "skyairline",
+  "sample_count": 36,
+  "uuid_freq": 0.639,
+  "timestamp_compact_freq": 0.083,
+  "epoch_ts_freq": 0.0,
+  "hex_block_freq": 0.167,
+  "counter_freq": 0.389,
+  "local_part_length_min": 22,
+  "local_part_length_max": 71,
+  "local_part_length_mean": 37.0,
+  "segment_count_min": 1,
+  "segment_count_max": 7,
+  "segment_count_mean": 4.2,
+  "domains": [
+    "email.amazonses.com",
+    "geopod-ismtpd-0",
+    "geopod-ismtpd-10",
+    "geopod-ismtpd-11",
+    "geopod-ismtpd-13",
+    "geopod-ismtpd-15",
+    "geopod-ismtpd-31",
+    "geopod-ismtpd-36",
+    "geopod-ismtpd-9",
+    "geopod-ismtpd-canary-0",
+    "iad4s13mta0395.xt.local",
+    "iad4s13mta0397.xt.local",
+    "iad4s13mta0403.xt.local",
+    "iad4s13mta1241.xt.local",
+    "iad4s13mta1243.xt.local",
+    "iad4s13mta1245.xt.local",
+    "iad4s13mta1247.xt.local",
+    "iad4s13mta1249.xt.local",
+    "mail66.suw13.rsgsv.net",
+    "mail81.atl111.rsgsv.net"
+  ],
+  "top_prefixes": [
+    "ec",
+    "ce",
+    "cafeaf",
+    "dbc",
+    "fa"
+  ],
+  "top_providers": [
+    "Amazon SES"
+  ]
+}

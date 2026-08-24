@@ -172,6 +172,7 @@ def analyze(
                 base_dir = cand
                 break
     
+    sender_in_db = False
     if org and signatures_dir:
         from eti_core.msgid.signature import OrgSignature
         sig_path = signatures_dir / f"{org}.json"
@@ -179,32 +180,29 @@ def analyze(
             sig_path = signatures_dir / f"{org}_signature.json"
         if sig_path.exists():
             org_signature = OrgSignature.load(sig_path)
+            sender_in_db = True
         else:
             console.print(f"[yellow]Advertencia: No se encontró firma para '{org}' en {signatures_dir}[/]")
     elif sender_domain and base_dir.exists():
         from eti_core.msgid.signature import OrgSignature
-        domain_to_sig = {
-            "gmail.com": "google",
-            "google.com": "google",
-            "hotmail.com": "microsoft",
-            "outlook.com": "microsoft",
-            "bancoestado.cl": "bancoestado",
-            "bestado.cl": "bancoestado",
-            "bancochile.cl": "bancochile",
-            "falabella.com": "falabella",
-            "bancofalabella.cl": "bancofalabella",
-            "bci.cl": "bci",
-            "mercadolibre.cl": "mercadolibre",
-            "mercadolibre.com": "mercadolibre",
-            "santander.cl": "santander",
-        }
-        org_name = domain_to_sig.get(sender_domain)
-        if not org_name:
+        from eti_core.scoring.characterization import get_org_for_domain, EXPLICIT_GROUPS
+
+        sender_domain_lower = sender_domain.lower()
+        org_name = get_org_for_domain(sender_domain_lower)
+
+        if org_name and org_name != "unknown":
+            sig_candidate = base_dir / f"{org_name}_signature.json"
+            if sig_candidate.exists() or org_name in EXPLICIT_GROUPS:
+                sender_in_db = True
+
+        if not sender_in_db:
             for pf in base_dir.glob("*_signature.json"):
                 org_prefix = pf.name.replace("_signature.json", "")
-                if org_prefix in sender_domain:
+                if org_prefix in sender_domain_lower:
                     org_name = org_prefix
+                    sender_in_db = True
                     break
+
         if org_name:
             sig_file = base_dir / f"{org_name}_signature.json"
             if sig_file.exists():
@@ -214,7 +212,11 @@ def analyze(
                     pass
 
     # Calcular ETI
-    score = calculate_eti(email_headers, org_signature=org_signature)
+    score = calculate_eti(
+        email_headers,
+        org_signature=org_signature,
+        sender_in_db=sender_in_db if sender_domain else False,
+    )
 
     if json_output:
         print(score.model_dump_json(indent=2))

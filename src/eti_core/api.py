@@ -204,54 +204,7 @@ async def analyze(request: AnalyzeRequest) -> TrustScore:
                         base_dir = cand
                         break
             
-            # Mapa completo de dominios conocidos → firma
-            domain_to_sig = {
-                # Google
-                "gmail.com": "google",
-                "google.com": "google",
-                "googlemail.com": "google",
-                # Microsoft
-                "hotmail.com": "microsoft",
-                "outlook.com": "microsoft",
-                "live.com": "microsoft",
-                "microsoft.com": "microsoft",
-                # Banca chilena
-                "bancoestado.cl": "bancoestado",
-                "bestado.cl": "bancoestado",
-                "acepta.com": "acepta",
-                "bancochile.cl": "bancochile",
-                "falabella.com": "falabella",
-                "bancofalabella.cl": "bancofalabella",
-                "cmrfalabella.com": "bancofalabella",
-                "bci.cl": "bci",
-                "tbci.cl": "bci",
-                "santander.cl": "santander",
-                "itau.cl": "itau",
-                "scotiabank.cl": "bci",
-                "provida.cl": "provida",
-                "afphabitat.cl": "afphabitat",
-                "unoafp.cl": "unoafp",
-                "tenpo.cl": "tenpo",
-                "servipag.cl": "servipag",
-                # Retail / E-commerce
-                "ripley.cl": "ripley",
-                "paris.cl": "paris",
-                "hites.com": "hites",
-                "abcdin.cl": "abcdin",
-                "mercadolibre.cl": "mercadolibre",
-                "mercadolibre.com": "mercadolibre",
-                "dafiti.cl": "dafiti",
-                # Servicios
-                "entel.cl": "google",  # usa Google Workspace
-                "movistar.cl": "movistar",
-                "wom.cl": "wom",
-                "spotify.com": "spotify",
-                "netflix.com": "netflix",
-                "uber.com": "uber",
-                "pedidosya.com": "pedidosya",
-                "paypal.com": "paypal",
-                "linkedin.com": "linkedin",
-            }
+            from eti_core.scoring.characterization import get_org_for_domain, KNOWN_BRAND_NAMES, EXPLICIT_GROUPS
 
             # Detectar si el From display name menciona una entidad conocida
             # pero el dominio real del correo no pertenece a esa entidad → SPOOFING
@@ -259,29 +212,17 @@ async def analyze(request: AnalyzeRequest) -> TrustScore:
             from_display = re.search(r'^"?([^"<]+)"?\s*<', from_header)
             display_name = from_display.group(1).strip().lower() if from_display else ""
 
-            # Lista de nombres de marcas conocidas que pueden ser suplantadas
-            known_brand_names = [
-                "banco estado", "bancoestado", "banco de chile", "bancochile",
-                "bci", "santander", "falabella", "cmr", "ripley", "paris",
-                "mercado libre", "mercadolibre", "itaú", "itau", "scotiabank",
-                "sii", "servicio de impuestos", "tenpo", "servipag", "afp habitat",
-                "provida", "paypal", "netflix", "spotify", "amazon", "microsoft",
-                "google", "apple", "uber", "pedidosya", "linkedin",
-            ]
-
-            org_name = None
             sender_domain_lower = sender_domain.lower() if sender_domain else ""
+            org_name = get_org_for_domain(sender_domain_lower) if sender_domain_lower else None
 
-            # Verificar si el dominio real está en nuestro mapa
             sender_in_db = False
-            for d, sig in domain_to_sig.items():
-                if d in sender_domain_lower or sender_domain_lower.endswith("." + d):
-                    org_name = sig
+            if org_name and org_name != "unknown":
+                sig_candidate = base_dir / f"{org_name}_signature.json"
+                if sig_candidate.exists() or org_name in EXPLICIT_GROUPS:
                     sender_in_db = True
-                    break
 
-            # Buscar también por prefijo en los archivos de firma
-            if not org_name and base_dir.exists():
+            # Buscar también si coincide por prefijo de archivo de firma
+            if not sender_in_db and base_dir.exists() and sender_domain_lower:
                 for pf in base_dir.glob("*_signature.json"):
                     org_prefix = pf.name.replace("_signature.json", "")
                     if org_prefix in sender_domain_lower:
@@ -292,7 +233,7 @@ async def analyze(request: AnalyzeRequest) -> TrustScore:
             # Detectar spoofing: display name menciona una marca conocida
             # pero el dominio real NO pertenece a esa entidad
             if not sender_in_db and display_name:
-                for brand in known_brand_names:
+                for brand in KNOWN_BRAND_NAMES:
                     if brand in display_name:
                         spoofing_detected = True
                         break

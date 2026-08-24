@@ -1,0 +1,23 @@
+{
+  "org_id": "emailclarochile",
+  "sample_count": 16,
+  "uuid_freq": 0.0,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.312,
+  "hex_block_freq": 1.0,
+  "counter_freq": 1.0,
+  "local_part_length_min": 42,
+  "local_part_length_max": 45,
+  "local_part_length_mean": 43.4,
+  "segment_count_min": 4,
+  "segment_count_max": 4,
+  "segment_count_mean": 4.0,
+  "domains": [
+    "ap21-ca-ue1.prod.awspr",
+    "ap22-ca-ue1.prod.awspr",
+    "ap23-ca-ue1.prod.awspr",
+    "bg21-ca-ue1.prod.awspr"
+  ],
+  "top_prefixes": [],
+  "top_providers": []
+}

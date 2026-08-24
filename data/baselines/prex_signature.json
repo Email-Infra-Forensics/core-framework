@@ -1,0 +1,22 @@
+{
+  "org_id": "prex",
+  "sample_count": 10,
+  "uuid_freq": 0.0,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.0,
+  "hex_block_freq": 1.0,
+  "counter_freq": 0.0,
+  "local_part_length_min": 32,
+  "local_part_length_max": 32,
+  "local_part_length_mean": 32.0,
+  "segment_count_min": 1,
+  "segment_count_max": 1,
+  "segment_count_mean": 1.0,
+  "domains": [
+    "prexcard.cl"
+  ],
+  "top_prefixes": [
+    "fe"
+  ],
+  "top_providers": []
+}

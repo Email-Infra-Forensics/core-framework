@@ -1,0 +1,21 @@
+{
+  "org_id": "trello",
+  "sample_count": 20,
+  "uuid_freq": 0.3,
+  "timestamp_compact_freq": 0.0,
+  "epoch_ts_freq": 0.0,
+  "hex_block_freq": 0.9,
+  "counter_freq": 0.2,
+  "local_part_length_min": 21,
+  "local_part_length_max": 60,
+  "local_part_length_mean": 30.3,
+  "segment_count_min": 1,
+  "segment_count_max": 7,
+  "segment_count_mean": 2.6,
+  "domains": [
+    "trello.com",
+    "us-west-2.amazonses.com"
+  ],
+  "top_prefixes": [],
+  "top_providers": []
+}

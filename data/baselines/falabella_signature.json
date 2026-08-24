@@ -1,11 +1,11 @@
 {
   "org_id": "falabella",
-  "sample_count": 645,
+  "sample_count": 715,
   "uuid_freq": 0.926,
   "timestamp_compact_freq": 0.034,
   "epoch_ts_freq": 0.0,
   "hex_block_freq": 0.0,
-  "counter_freq": 0.431,
+  "counter_freq": 0.435,
   "local_part_length_min": 21,
   "local_part_length_max": 80,
   "local_part_length_mean": 35.3,
@@ -45,6 +45,8 @@
     "ind1s06mta1603.xt.local",
     "ind1s06mta1604.xt.local",
     "ind1s06mta1606.xt.local",
+    "ind1s06mta1619.xt.local",
+    "ind1s06mta1624.xt.local",
     "ind1s06mta1633.xt.local",
     "ind1s06mta1634.xt.local",
     "ind1s06mta1635.xt.local",
@@ -64,6 +66,7 @@
     "mail.falabella.cl",
     "mail4.falabella.cl",
     "prod-st04",
+    "raquil",
     "sfdc.net",
     "xtinp2mta4808.xt.local",
     "xtinp2mta4818.xt.local"
@@ -71,8 +74,11 @@
   "top_prefixes": [
     "cf",
     "bd",
-    "ab",
-    "bc",
-    "de"
+    "cc",
+    "ed",
+    "fd"
+  ],
+  "top_providers": [
+    "Native (Postfix/Exim)"
   ]
 }

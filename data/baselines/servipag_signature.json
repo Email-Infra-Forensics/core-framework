@@ -1,27 +1,31 @@
 {
   "org_id": "servipag",
-  "sample_count": 208,
+  "sample_count": 603,
   "uuid_freq": 0.0,
   "timestamp_compact_freq": 0.0,
   "epoch_ts_freq": 0.0,
   "hex_block_freq": 0.0,
-  "counter_freq": 0.024,
+  "counter_freq": 0.032,
   "local_part_length_min": 11,
   "local_part_length_max": 47,
-  "local_part_length_mean": 16.8,
+  "local_part_length_mean": 19.6,
   "segment_count_min": 1,
   "segment_count_max": 6,
-  "segment_count_mean": 1.7,
+  "segment_count_mean": 1.6,
   "domains": [
     "mailammx2.servipag.com",
     "mailcvmx1.servipag.com",
     "mcnet.cl",
     "mx.google.com",
+    "svridi.servipag.cl",
     "svridi.servipag.com",
     "svridi1.servipag.cl"
   ],
   "top_prefixes": [
     "db",
-    "bb"
-  ]
+    "bb",
+    "bc",
+    "bd"
+  ],
+  "top_providers": []
 }

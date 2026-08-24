@@ -1,19 +1,22 @@
 {
   "org_id": "acepta",
-  "sample_count": 24,
+  "sample_count": 36,
   "uuid_freq": 0.0,
   "timestamp_compact_freq": 0.0,
-  "epoch_ts_freq": 0.0,
+  "epoch_ts_freq": 0.083,
   "hex_block_freq": 0.0,
-  "counter_freq": 0.167,
-  "local_part_length_min": 46,
+  "counter_freq": 0.444,
+  "local_part_length_min": 45,
   "local_part_length_max": 48,
-  "local_part_length_mean": 47.1,
-  "segment_count_min": 6,
+  "local_part_length_mean": 46.9,
+  "segment_count_min": 5,
   "segment_count_max": 6,
-  "segment_count_mean": 6.0,
+  "segment_count_mean": 5.7,
   "domains": [
+    "SANPCLPRDAPPAA.prod.sovos.org",
+    "SANPPLPRDWEBAGUASANDINAS",
     "mx.google.com"
   ],
-  "top_prefixes": []
+  "top_prefixes": [],
+  "top_providers": []
 }
