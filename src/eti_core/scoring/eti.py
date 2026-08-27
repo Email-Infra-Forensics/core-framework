@@ -180,8 +180,9 @@ def calculate_eti(
     headers: EmailHeaders,
     org_signature: Optional[OrgSignature] = None,
     weights_path: Optional[Path] = None,
-    sender_in_db: bool = False,
+    sender_in_db: bool = True,
     spoofing_detected: bool = False,
+    spoofing_reason: Optional[str] = None,
 ) -> TrustScore:
     """
     Calcula el Email Trust Index para un correo.
@@ -190,8 +191,9 @@ def calculate_eti(
         headers: Headers del correo (salida de data-curator o del parser).
         org_signature: Firma de la organización emisora (opcional).
         weights_path: Ruta a weights.yaml (usa el default si no se provee).
-        sender_in_db: Si el dominio emisor está registrado en nuestra DB.
+        sender_in_db: Si el dominio emisor está registrado en nuestra DB de 62 organizaciones.
         spoofing_detected: Si se detectó intento de suplantación de identidad.
+        spoofing_reason: Razón descriptiva de la suplantación detectada.
 
     Returns:
         TrustScore con ETI, label y breakdown explicable.
@@ -201,9 +203,14 @@ def calculate_eti(
     penalties_cfg = config.get("penalties", {})
     thresholds = config.get("thresholds", {"trusted": 70, "suspicious": 40})
 
-    # Si se detectó spoofing, cortocircuitamos con penalización severa
+    # Si se detectó spoofing, cortocircuitamos inmediatamente con score crítico
     if spoofing_detected:
-        all_reasons = ["[SPOOFING] display_name_suplanta_entidad_conocida"]
+        reason_text = spoofing_reason or "[SPOOFING] El remitente no coincide con la entidad aludida en el mensaje."
+        all_reasons = [
+            f"[SPOOFING] {reason_text}",
+            "[CRÍTICO] Remitente no autorizado para la marca declarada",
+            "[ALERTA] Discrepancia estructural entre contenido/asunto y dominio emisor"
+        ]
         breakdown = ScoreBreakdown(
             asn_consistency=0.0,
             msgid_match=0.0,
@@ -222,15 +229,13 @@ def calculate_eti(
             analyzed_at=datetime.now(tz=timezone.utc),
         )
 
-    # Calcular sub-scores
+    # Calcular sub-scores reales
     a_score, auth_reasons = compute_auth_score(headers.auth)
     auth_pass = headers.auth.spf == AuthStatus.PASS or headers.auth.dkim == AuthStatus.PASS
     asn_score, asn_reasons = compute_asn_score(headers.hops, auth_pass=auth_pass)
     msgid_score, msgid_reasons = compute_msgid_score(headers.message_id, org_signature)
 
-    # Si el emisor NO está en la DB, aplicar mínimos de aprobación:
-    # ASN y MSG-ID quedan en el neutro (0.5) pero el score de autenticación
-    # se respeta como real (si viene SPF/DKIM reales).
+    # Si la entidad NO está en la base de datos oficial, limitar sub-scores de ASN y MSG-ID al neutro (0.5)
     if not sender_in_db:
         if asn_score > 0.5:
             asn_score = 0.5
@@ -250,9 +255,9 @@ def calculate_eti(
     anomalous_hops = sum(1 for h in headers.hops if h.classification == HopClassification.ANOMALOUS)
     eti_raw -= anomalous_hops * penalties_cfg.get("anomalous_hop_per_hop", 5.0)
 
-    # Nota: la ausencia de Authentication-Results ya está penalizada dentro
-    # de auth_score (devuelve 0.3 neutro en lugar de 1.0 por auth pass).
-    # No aplicamos penalización adicional para evitar doble castigo.
+    # Penalización por ausencia de cabecera de autenticación si corresponde
+    if headers.auth.raw is None and len(headers.hops) == 0:
+        eti_raw -= penalties_cfg.get("no_auth_results_header", 10.0)
 
     all_unknown = all(h.asn is None for h in headers.hops) and len(headers.hops) > 0
     if all_unknown:
@@ -261,16 +266,22 @@ def calculate_eti(
     eti_final = max(0.0, min(100.0, eti_raw))
 
     # Clasificación
-    if eti_final >= thresholds["trusted"]:
-        label = "trusted"
-    elif eti_final >= thresholds["suspicious"]:
-        label = "suspicious"
+    if not sender_in_db:
+        label = "neutral"
+        all_reasons_prefix = ["[NEUTRO] Entidad no registrada en la línea base forense de 62 organizaciones certificadas."]
     else:
-        label = "anomalous"
+        all_reasons_prefix = []
+        if eti_final >= thresholds["trusted"]:
+            label = "trusted"
+        elif eti_final >= thresholds["suspicious"]:
+            label = "suspicious"
+        else:
+            label = "anomalous"
 
     # Consolidar razones
     all_reasons = (
-        [f"[ASN] {r}" for r in asn_reasons]
+        all_reasons_prefix
+        + [f"[ASN] {r}" for r in asn_reasons]
         + [f"[MSGID] {r}" for r in msgid_reasons]
         + [f"[AUTH] {r}" for r in auth_reasons]
     )

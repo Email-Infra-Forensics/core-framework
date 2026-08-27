@@ -25,10 +25,18 @@ env/
 # Cache de RDAP
 .eti_cache/
 
-# pytest
+# Pytest y Cobertura
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Archivos de testeo temporales y scratch
+test_data/
+temp/
+scratch/
+*.jsonl
+*.mbox
+*.eml
 
 # Variables de entorno
 .env
@@ -38,3 +46,4 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+

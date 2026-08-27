@@ -167,6 +167,10 @@ async def analyze(request: AnalyzeRequest) -> TrustScore:
             auth.raw is not None,
         )
 
+        subject_header = headers.get("subject", "")
+        if isinstance(subject_header, list):
+            subject_header = subject_header[0]
+
         message_id = headers.get("message-id", "")
         if isinstance(message_id, list):
             message_id = message_id[0]
@@ -192,6 +196,7 @@ async def analyze(request: AnalyzeRequest) -> TrustScore:
         org_sig = None
         sender_in_db = False       # Si el dominio emisor está en nuestra DB
         spoofing_detected = False  # Si se detectó suplantación de identidad
+        spoofing_reason = None
         if sender_domain:
             base_dir = Path(__file__).resolve().parent.parent.parent / "data" / "baselines"
             if not base_dir.exists():
@@ -204,13 +209,11 @@ async def analyze(request: AnalyzeRequest) -> TrustScore:
                         base_dir = cand
                         break
             
-            from eti_core.scoring.characterization import get_org_for_domain, KNOWN_BRAND_NAMES, EXPLICIT_GROUPS
-
-            # Detectar si el From display name menciona una entidad conocida
-            # pero el dominio real del correo no pertenece a esa entidad → SPOOFING
-            spoofing_detected = False
-            from_display = re.search(r'^"?([^"<]+)"?\s*<', from_header)
-            display_name = from_display.group(1).strip().lower() if from_display else ""
+            from eti_core.scoring.characterization import (
+                get_org_for_domain,
+                check_spoofing_attempt,
+                EXPLICIT_GROUPS,
+            )
 
             sender_domain_lower = sender_domain.lower() if sender_domain else ""
             org_name = get_org_for_domain(sender_domain_lower) if sender_domain_lower else None
@@ -230,15 +233,7 @@ async def analyze(request: AnalyzeRequest) -> TrustScore:
                         sender_in_db = True
                         break
 
-            # Detectar spoofing: display name menciona una marca conocida
-            # pero el dominio real NO pertenece a esa entidad
-            if not sender_in_db and display_name:
-                for brand in KNOWN_BRAND_NAMES:
-                    if brand in display_name:
-                        spoofing_detected = True
-                        break
-
-            if org_name and base_dir.exists():
+            if org_name and base_dir.exists() and sender_in_db:
                 sig_file = base_dir / f"{org_name}_signature.json"
                 if sig_file.exists():
                     try:
@@ -246,11 +241,26 @@ async def analyze(request: AnalyzeRequest) -> TrustScore:
                     except Exception:
                         pass
 
+            # 2. Si el remitente NO pertenece a ninguna de las 62 organizaciones oficiales,
+            # verificar si está intentando suplantar una marca protegida (Spoofing)
+            if not sender_in_db:
+                body_snippet = request.raw_email[:1500] if request.raw_email else ""
+                is_spoof, spoof_brand, reason_msg = check_spoofing_attempt(
+                    from_header=from_header,
+                    subject=str(subject_header),
+                    body_snippet=body_snippet,
+                    sender_domain=sender_domain,
+                )
+                if is_spoof:
+                    spoofing_detected = True
+                    spoofing_reason = reason_msg
+
         result = calculate_eti(
             email_headers,
             org_signature=org_sig,
             sender_in_db=sender_in_db if sender_domain else False,
             spoofing_detected=spoofing_detected,
+            spoofing_reason=spoofing_reason,
         )
         return result
 
