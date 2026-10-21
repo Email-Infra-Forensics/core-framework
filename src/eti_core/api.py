@@ -241,19 +241,19 @@ async def analyze(request: AnalyzeRequest) -> TrustScore:
                     except Exception:
                         pass
 
-            # 2. Si el remitente NO pertenece a ninguna de las 62 organizaciones oficiales,
-            # verificar si está intentando suplantar una marca protegida (Spoofing)
-            if not sender_in_db:
-                body_snippet = request.raw_email[:1500] if request.raw_email else ""
-                is_spoof, spoof_brand, reason_msg = check_spoofing_attempt(
-                    from_header=from_header,
-                    subject=str(subject_header),
-                    body_snippet=body_snippet,
-                    sender_domain=sender_domain,
-                )
-                if is_spoof:
-                    spoofing_detected = True
-                    spoofing_reason = reason_msg
+            # 2. Verificar si está intentando suplantar una marca protegida (Spoofing)
+            # check_spoofing_attempt valida si el remitente no es el dominio oficial de la marca
+            body_snippet = request.raw_email[:1500] if request.raw_email else ""
+            is_spoof, spoof_brand, reason_msg = check_spoofing_attempt(
+                from_header=from_header,
+                subject=str(subject_header),
+                body_snippet=body_snippet,
+                sender_domain=sender_domain,
+            )
+            if is_spoof:
+                spoofing_detected = True
+                spoofing_reason = reason_msg
+                sender_in_db = False
 
         result = calculate_eti(
             email_headers,

@@ -39,6 +39,7 @@ KNOWN_ESP_ASNS: dict[int, str] = {
     36483: "Sinch Mailgun",
     # Salesforce / Exacttarget
     49836: "Salesforce Inc.",
+    14340: "Salesforce / ExactTarget",
     # SparkPost
     40285: "SparkPost / MessageSystems",
     # Proofpoint
@@ -172,12 +173,22 @@ def classify_asn(asn: int | None, ip: str | None = None, host: str | None = None
             return HopClassification.KNOWN_ESP, "Twilio SendGrid"
         if "amazonses" in host_lower or "awstrack" in host_lower:
             return HopClassification.KNOWN_ESP, "Amazon SES"
+        if "exacttarget" in host_lower or "salesforce" in host_lower or ".xt.local" in host_lower:
+            return HopClassification.KNOWN_ESP, "Salesforce Marketing Cloud"
+        if "bci.cl" in host_lower or "isc.cl" in host_lower or "iport2" in host_lower:
+            return HopClassification.KNOWN_ESP, "Banco de Crédito e Inversiones (BCI)"
+        if "bancochile.cl" in host_lower:
+            return HopClassification.KNOWN_ESP, "Banco de Chile"
+        if "bancoestado.cl" in host_lower or "bestado.cl" in host_lower:
+            return HopClassification.KNOWN_ESP, "BancoEstado"
+        if "santander.cl" in host_lower:
+            return HopClassification.KNOWN_ESP, "Banco Santander"
 
     # No identificado
     return HopClassification.UNKNOWN, None
 
 
-def get_esp_name(asn: int | None, ip: str | None = None) -> str | None:
+def get_esp_name(asn: int | None, ip: str | None = None, host: str | None = None) -> str | None:
     """Devuelve el nombre del ESP o None si es desconocido."""
-    _, name = classify_asn(asn, ip)
+    _, name = classify_asn(asn, ip, host=host)
     return name

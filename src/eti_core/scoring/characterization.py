@@ -22,9 +22,14 @@ EXPLICIT_GROUPS = {
         "bancoestado.cl", "correo.bancoestado.cl", "correobancoestado.cl", "emailbancoestado.cl",
         "microempresas.bancoestado.cl", "regularizacion.bancoestado.cl", "bestado.cl"
     ],
-    "bancochile": ["bancochile.cl", "e.bancochile.cl", "comercial.bancochile.cl"],
-    "bci": ["bci.cl", "info.bci.cl", "mail.machbank.cl", "somosmach.com", "mail.somosmach.com", "tbci.cl"],
-    "santander": ["santander.cl", "risk.santander.cl", "mensajeria.santander.cl"],
+    "bancochile": ["bancochile.cl", "e.bancochile.cl", "comercial.bancochile.cl", "bancoedwards.cl", "edwards.cl"],
+    "bci": [
+        "bci.cl", "info.bci.cl", "mail.machbank.cl", "somosmach.com", "mail.somosmach.com", "tbci.cl",
+        "notificaciones.bci.cl", "contacto.bci.cl", "comunicaciones.bci.cl", "inversiones.bci.cl",
+        "alertas.bci.cl", "envios.bci.cl", "beneficios.bci.cl", "bcinet.bci.cl", "bciseguros.cl",
+        "machbank.cl", "bciplus.cl", "bcipyme.cl", "bciasset.cl", "seguros.bci.cl", "mail.bci.cl"
+    ],
+    "santander": ["santander.cl", "risk.santander.cl", "mensajeria.santander.cl", "santanderconsumer.cl"],
     "scotiabank": ["scotiabank.cl", "hola.scotiabank.cl"],
     "itau": ["itau.cl"],
     "coopeuch": ["coopeuch.cl", "transaccionalcoopeuch.com"],
@@ -139,10 +144,13 @@ BRAND_SIGNATURES = {
         "name": "BCI / MACH",
         "keywords": [
             "bci", "banco bci", "banco de credito e inversiones", "mach", "tarjeta mach",
-            "somos mach", "bci corredores"
+            "somos mach", "bci corredores", "bci pyme", "bci plus"
         ],
         "valid_domains": [
-            "bci.cl", "info.bci.cl", "mail.machbank.cl", "somosmach.com", "mail.somosmach.com", "tbci.cl"
+            "bci.cl", "info.bci.cl", "mail.machbank.cl", "somosmach.com", "mail.somosmach.com", "tbci.cl",
+            "notificaciones.bci.cl", "contacto.bci.cl", "comunicaciones.bci.cl", "inversiones.bci.cl",
+            "alertas.bci.cl", "envios.bci.cl", "beneficios.bci.cl", "bcinet.bci.cl", "bciseguros.cl",
+            "machbank.cl", "bciplus.cl", "bcipyme.cl", "bciasset.cl", "seguros.bci.cl", "mail.bci.cl"
         ]
     },
     "scotiabank": {
